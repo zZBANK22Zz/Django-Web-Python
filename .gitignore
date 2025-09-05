@@ -1,1 +1,4 @@
 .env
+.gitignore
+.DS_Store
+db.sqlite3
