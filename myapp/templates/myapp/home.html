@@ -1,0 +1,46 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block myheader %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/myCss.css' %}">
+
+    <!-- Shop Title -->
+    <h1 style="text-align: center;">CoC Gaming Shop</h1>
+
+    <!-- Discount Message Below the Title -->
+    {% if user.is_authenticated %}
+        {% if user.profile.usertype == 'VVIP' %}
+            <p style="text-align: center; color: #ff6600; font-weight: bold;">
+                15% Discount for VVIP member
+            </p>
+        {% elif user.profile.usertype == 'VIP' %}
+            <p style="text-align: center; color: #0099ff; font-weight: bold;">
+                10% Discount for VIP member
+            </p>
+        {% elif user.profile.usertype == 'Member' %}
+            <p style="text-align: center; color: #33cc33; font-weight: bold;">
+                5% Discount for member
+            </p>
+        {% endif %}
+    {% endif %}
+{% endblock myheader %}
+
+{% block content %}
+    <center>
+        {% for data in pd %}
+            <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 300px;">
+                <h2>{{ data.title }}</h2>
+                <p>{{ data.description }}</p>
+                <p>Price: ${{ data.price }}</p>
+                <p>Quantity: {{ data.quantity }}</p>
+                <p>
+                    {% if data.instock %}
+                        In Stock: {{ data.instock }}
+                    {% else %}
+                        Out of Stock
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+    </center>
+{% endblock content %}
