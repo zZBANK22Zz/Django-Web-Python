@@ -1,11 +1,12 @@
 import os
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -13,6 +14,82 @@ def showContact(request):
     allcontact = contactList.objects.all()
     context = {'contact' : allcontact}
     return render(request, 'myapp/showcontact.html', context)
+
+def userRegist(request):
+    context = {}
+
+    if request.method == 'POST':
+        data = request.POST.copy()
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        repassword = data.get('repassword')
+
+        try:
+            # Check if username already exists
+            User.objects.get(username=username)
+            context['message'] = "Username duplicate"
+        except:
+            # Create a new user
+            newuser = User()
+            newuser.username = username
+            newuser.first_name = firstname
+            newuser.last_name = lastname
+            newuser.email = email
+
+            if password == repassword:
+                # Set password securely
+                newuser.set_password(password)
+                newuser.save()
+
+                # Create user profile
+                newprofile = Profile()
+                newprofile.user = User.objects.get(username=username)
+                newprofile.save()
+
+                context['message'] = "Register complete."
+            else:
+                context['message'] = "Password or re-password is incorrect."
+
+    return render(request, 'myapp/register.html', context)
+
+def userProfile(request):
+    context = {}
+    userprofile = Profile.objects.get(user=request.user)
+    context['profile'] = userprofile
+    return render(request, 'myapp/profile.html', context)
+
+def editProfile(request):
+    context = {}
+    if request.method == 'POST':
+        data = request.POST.copy()
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        # Get the current user
+        current_user = User.objects.get(id=request.user.id)
+        current_user.first_name = firstname
+        current_user.last_name = lastname
+        current_user.username = username
+        current_user.email = email
+        current_user.set_password(password)
+        current_user.save()
+
+        try:
+            # Re-authenticate user after changing password
+            user = authenticate(username=current_user.username,
+                                password=password)
+            login(request, user)
+            return redirect('home-page')
+        except:
+            context['message'] = "Edit profile failed."
+
+    return render(request, 'myapp/editprofile.html', context)
 
 def userLogin(request):
     context = {}
@@ -25,6 +102,7 @@ def userLogin(request):
         try:
             user = authenticate(username=username, password=password)
             login(request, user)
+            return redirect('home-page')
         except:
             context['message'] = 'Invalid username or password!'
             

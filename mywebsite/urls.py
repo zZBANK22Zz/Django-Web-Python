@@ -19,10 +19,13 @@ from django.urls import path, include
 
 from django.contrib.auth import views
 
+from myapp.views import userLogin
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.url')),  # Include the URLs from myapp
-    path('login/', views.LoginView.as_view(template_name='myapp/login.html'), name='login'),
+    # path('login/', views.LoginView.as_view(template_name='myapp/login.html'), name='login'),
+    path('login/', userLogin, name='login'),
     path('logout/', views.LogoutView.as_view(template_name='myapp/logout.html'), name='logout'),
     path("", include("django.contrib.auth.urls")),
 ]

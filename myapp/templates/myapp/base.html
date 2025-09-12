@@ -272,7 +272,7 @@
             
             {% if user.is_authenticated %}
             <a class="py-2 text-dark text-decoration-none" href="#"
-              >Hello, {{ user.username }} [{{user.profile.usertype}}]</a
+              >Hello, <a href="{% url 'profile-page' %}">{{user.first_name}}</a>[{{user.profile.usertype}}]</a
             >
 
             <form
