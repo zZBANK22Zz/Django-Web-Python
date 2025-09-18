@@ -30,3 +30,10 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.user.username
+    
+class Action(models.Model):
+    contactList = models.ForeignKey(contactList, on_delete=models.CASCADE)
+    actionDetail = models.TextField()
+    
+    def __str__(self):
+        return self.contactList.topic    

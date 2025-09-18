@@ -7,9 +7,52 @@ from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+def actionPage(request, cid):
+    # cid = contactlist ID
+    context = {}
+    contact = contactList.objects.get(id=cid)
+    context['contact'] = contact
 
+    try:
+        action = Action.objects.get(contactList=contact)
+        context['action'] = action
+    except:
+        pass
+
+    if request.method == 'POST':
+        data = request.POST.copy()
+        actiondetail = data.get('actiondetail')
+
+        if 'save' in data:
+            try:
+                check = Action.objects.get(contactList=contact)
+                check.actionDetail = actiondetail
+                check.save()
+                context['action'] = check
+            except:
+                new = Action()
+                new.contactList = contact
+                new.actionDetail = actiondetail
+                new.save()
+
+        elif 'delete' in data:
+            try:
+                contact.delete()
+                return redirect('showcontact-page')
+            except:
+                pass
+
+        elif 'complete' in data:
+            contact.complete = True
+            contact.save()
+            return redirect('showcontact-page')
+
+    return render(request, 'myapp/action.html', context)
+
+@login_required(login_url='/login')
 def showContact(request):
     allcontact = contactList.objects.all()
     context = {'contact' : allcontact}
