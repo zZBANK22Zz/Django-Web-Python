@@ -10,6 +10,9 @@ class Product(models.Model):
         null=True, blank=True)
     quantity = models.IntegerField(null=True, blank=True)
     instock = models.BooleanField(default=True)
+    #File
+    picture = models.ImageField(upload_to='product', null=True, blank=True)
+    specfile = models.FileField(upload_to='specfile', null=True, blank=True)
     
     def __str__(self):
         return self.title

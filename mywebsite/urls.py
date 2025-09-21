@@ -21,6 +21,9 @@ from django.contrib.auth import views
 
 from myapp.views import userLogin
 
+from django.contrib.staticfiles.urls import static, staticfiles_urlpatterns
+from . import settings
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.url')),  # Include the URLs from myapp
@@ -29,3 +32,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(template_name='myapp/logout.html'), name='logout'),
     path("", include("django.contrib.auth.urls")),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

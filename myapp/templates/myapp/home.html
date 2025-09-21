@@ -30,16 +30,17 @@
         {% for data in pd %}
             <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 300px;">
                 <h2>{{ data.title }}</h2>
+                {% if data.picture %}
+                    <img src="{{ data.picture.url }}" alt="{{ data.title }}" style="max-width: 100%; height: auto;">
+                {% else %}
+                    <p>No image available</p>
+                {% endif %}
                 <p>{{ data.description }}</p>
                 <p>Price: ${{ data.price }}</p>
-                <p>Quantity: {{ data.quantity }}</p>
-                <p>
-                    {% if data.instock %}
-                        In Stock: {{ data.instock }}
-                    {% else %}
-                        Out of Stock
-                    {% endif %}
-                </p>
+                <p>Stock: {{ data.quantity }}</p>
+                {% if data.specfile %}
+                    specfile: <a href="{{ data.specfile.url }}" download>Download</a>
+                {% endif %}
             </div>
         {% endfor %}
     </center>

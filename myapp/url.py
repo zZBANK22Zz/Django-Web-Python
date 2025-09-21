@@ -14,4 +14,5 @@ urlpatterns = [
     path('profile/', userProfile, name='profile-page'),  # New URL pattern for userProfile view
     path('editprofile/', editProfile, name='editprofile-page'),  # New URL pattern for editProfile view
     path('action/<int:cid>/', actionPage, name='action-page'),  # New URL pattern for actionPage view
+    path('addproduct/', addProduct, name='addproduct-page'),  # New URL pattern for addProduct view
 ]
