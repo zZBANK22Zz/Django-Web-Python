@@ -27,21 +27,51 @@
 
 {% block content %}
     <center>
-        {% for data in pd %}
-            <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 300px;">
-                <h2>{{ data.title }}</h2>
-                {% if data.picture %}
-                    <img src="{{ data.picture.url }}" alt="{{ data.title }}" style="max-width: 100%; height: auto;">
-                {% else %}
-                    <p>No image available</p>
-                {% endif %}
-                <p>{{ data.description }}</p>
-                <p>Price: ${{ data.price }}</p>
-                <p>Stock: {{ data.quantity }}</p>
-                {% if data.specfile %}
-                    specfile: <a href="{{ data.specfile.url }}" download>Download</a>
-                {% endif %}
+        {% for row in allrow %}
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+            {% for c in row %}
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    {% if c.picture %}
+                    <img src="{{ c.picture.url }}" class="card-img-top" width="200" height="300">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ c.title }}</h5>
+                        <p class="card-text">{{ c.price }} ฿</p>
+                        <a href="#" class="btn btn-primary">more detail</a>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+        </div>
         {% endfor %}
     </center>
+    <hr>
+    <ul class="pagination">
+            
+            {% if allproduct.has_previous and allproduct.has_next != True %}
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.previous_page_number}}"> < </a></li>
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.number|add:-1}}">{{allproduct.number|add:-1}}</a></li>
+                <li class="page-item active"><a class="page-link" href="?page={{allproduct.number}}">{{allproduct.number}}</a></li>
+            {% endif %}
+
+            {% if allproduct.has_previous and allproduct.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.previous_page_number}}"> < </a></li>
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.number|add:-1}}">{{allproduct.number|add:-1}}</a></li>
+                <li class="page-item active"><a class="page-link" href="?page={{allproduct.number}}">{{allproduct.number}}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.number|add:1}}">{{allproduct.number|add:1}}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.next_page_number}}"> > </a></li>
+            {% endif %}
+
+            {% if allproduct.has_next and allproduct.has_previous != True %}
+                <li class="page-item active"><a class="page-link" href="?page={{allproduct.number}}">{{allproduct.number}}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.number|add:1}}">{{allproduct.number|add:1}}</a></li>
+                {% if allproduct.num_pages > 2 %}
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.number|add:2}}">{{allproduct.number|add:2}}</a></li>
+                {% endif %}
+                <li class="page-item"><a class="page-link" href="?page={{allproduct.next_page_number}}"> > </a></li>
+            {% endif %} 
+            
+            
+    </ul> <p> page {{allproduct.number}} from {{allproduct.paginator.num_pages}} <p></p>
 {% endblock content %}

@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator
 
 # Create your views here.
 def addProduct(request):
@@ -210,7 +211,27 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN) if LINE_CHANNEL_ACCESS_TOKE
 
 def home(request):
     allproduct = Product.objects.all()
-    context = {'pd' : allproduct}
+    product_per_page = 3
+    paginator = Paginator(allproduct, product_per_page)
+    page = request.GET.get('page')
+    allproduct = paginator.get_page(page)
+
+    context = {'allproduct': allproduct}
+
+    # 1 row 3 cols
+    allrow = []
+    row = []
+    for i, p in enumerate(allproduct):
+        if i % 3 == 0:
+            if i != 0:
+                allrow.append(row)
+            row = []
+            row.append(p)
+        else:
+            row.append(p)
+    allrow.append(row)
+    context['allrow'] = allrow
+
     return render(request, 'myapp/home.html', context)
 
 def contact(request):
